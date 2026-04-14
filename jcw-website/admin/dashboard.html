@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JCW Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>JCW<span style="color: #FF3B30;">.</span></h1>
+                <p>Admin Panel</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="active" onclick="showSection('dashboard')">
+                    <span>📊</span> Dashboard
+                </a>
+                <a href="#" onclick="showSection('orders')">
+                    <span>📦</span> Orders
+                    <span class="badge" id="orderBadge">0</span>
+                </a>
+                <a href="#" onclick="showSection('products')">
+                    <span>👕</span> Products
+                </a>
+                <a href="#" onclick="showSection('customers')">
+                    <span>👥</span> Customers
+                </a>
+                <a href="#" onclick="showSection('subscribers')">
+                    <span>✉️</span> Subscribers
+                </a>
+                <a href="#" onclick="showSection('settings')">
+                    <span>⚙️</span> Settings
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button onclick="logout()" class="btn-logout">Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h2 id="pageTitle">Dashboard</h2>
+                <div class="user-info">
+                    <span>Welcome, Admin</span>
+                    <div class="avatar">A</div>
+                </div>
+            </header>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: rgba(255, 59, 48, 0.1); color: #FF3B30;">📦</div>
+                        <div class="stat-info">
+                            <h3 id="totalOrders">0</h3>
+                            <p>Total Orders</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: rgba(0, 200, 83, 0.1); color: #00C853;">💰</div>
+                        <div class="stat-info">
+                            <h3 id="totalRevenue">$0</h3>
+                            <p>Total Revenue</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: rgba(255, 193, 7, 0.1); color: #FFC107;">👥</div>
+                        <div class="stat-info">
+                            <h3 id="totalCustomers">0</h3>
+                            <p>Customers</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: rgba(33, 150, 243, 0.1); color: #2196F3;">✉️</div>
+                        <div class="stat-info">
+                            <h3 id="totalSubscribers">0</h3>
+                            <p>Subscribers</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-orders">
+                    <h3>Recent Orders</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentOrdersTable">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Orders Section -->
+            <section id="orders" class="content-section">
+                <div class="section-header">
+                    <h3>All Orders</h3>
+                    <div class="filters">
+                        <select id="statusFilter" onchange="filterOrders()">
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="processing">Processing</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                        </select>
+                        <button onclick="exportOrders()" class="btn-secondary">Export CSV</button>
+                    </div>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Email</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="allOrdersTable">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Products Section -->
+            <section id="products" class="content-section">
+                <div class="section-header">
+                    <h3>Manage Products</h3>
+                    <button onclick="addNewProduct()" class="btn-primary">+ Add Product</button>
+                </div>
+                <div class="products-grid" id="adminProductsGrid">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <!-- Customers Section -->
+            <section id="customers" class="content-section">
+                <h3>Customer List</h3>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Orders</th>
+                            <th>Total Spent</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customersTable">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Subscribers Section -->
+            <section id="subscribers" class="content-section">
+                <div class="section-header">
+                    <h3>Newsletter Subscribers</h3>
+                    <button onclick="exportSubscribers()" class="btn-secondary">Export CSV</button>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Date Subscribed</th>
+                        </tr>
+                    </thead>
+                    <tbody id="subscribersTable">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Settings Section -->
+            <!-- Settings Section -->
+<section id="settings" class="content-section">
+    <h3>Store Settings</h3>
+    <div class="settings-form">
+        <div class="form-group">
+            <label>Store Name</label>
+            <input type="text" value="Jacuzzy Wears" id="storeName">
+        </div>
+        <div class="form-group">
+            <label>Contact Email</label>
+            <input type="email" value="hello@jcw.com" id="storeEmail">
+        </div>
+        <div class="form-group">
+            <label>Currency</label>
+            <select id="currency">
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="GBP">GBP (£)</option>
+            </select>
+        </div>
+        <button onclick="saveSettings()" class="btn-primary">Save Changes</button>
+    </div>
+    
+    <!-- Bank Details Section -->
+    <div class="settings-section" style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
+        <h3 style="margin-bottom: 1.5rem; color: var(--primary);">Bank Transfer Details</h3>
+        <p style="color: var(--gray); margin-bottom: 1.5rem; font-size: 0.9rem;">These details will be shown to customers who select Bank Transfer as payment method.</p>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label>Bank Name *</label>
+                <input type="text" id="bankName" placeholder="e.g., First Bank of Nigeria">
+            </div>
+            <div class="form-group">
+                <label>Account Number *</label>
+                <input type="text" id="accountNumber" placeholder="1234567890">
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label>Account Name *</label>
+                <input type="text" id="accountName" placeholder="Jacuzzy Wears Ltd">
+            </div>
+            <div class="form-group">
+                <label>SWIFT/BIC Code (Optional)</label>
+                <input type="text" id="bankSwift" placeholder="FBNINGLA">
+            </div>
+        </div>
+        
+        <button onclick="saveBankDetails()" class="btn-primary" style="margin-top: 1rem;">Save Bank Details</button>
+    </div>
+</section>
+        </main>
+    </div>
+
+    <!-- Order Detail Modal -->
+    <div class="modal" id="orderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Order Details</h3>
+                <button onclick="closeOrderModal()" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body" id="orderDetails">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
